@@ -1,0 +1,17 @@
+[Unit]
+Description=scoRPIon
+
+[Service]
+# Replace [PATH] with the installed path
+ExecStart=[PATH]/scorpion/index.js
+Restart=always
+# Replace [USER] with the account the service should run as
+User=[USER]
+# Note RHEL/Fedora uses 'nobody', Debian/Ubuntu uses 'nogroup'
+Group=nogroup
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=[PATH]/scorpion
+
+[Install]
+WantedBy=multi-user.target

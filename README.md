@@ -20,16 +20,39 @@ $ curl -H "Content-Type: application/json" -X POST -d '{ "token" : "supersecretk
 
 You'll need to have connected your Pi to your LAN and installed __git__ and __Node.js__
 
-Clone the project to your Pi using `git clone`
+Clone the project to your Pi using
+```
+$ git clone git@github.com:warlord0/scorpion.git
+```
 
 Install the prerequisites using:
 
 ```
+$ cd scorpion
 $ npm i
 ```
 Run the program using:
 ```
 $ npm start
+```
+
+> __NOTE:__ The user you run this as must be able to access the GPIO pins. Usually `root` can do this, so you could use `$ sudo npm start` to make it work. But if you're going to run it with non-root permissions you need to make your user a member of the `gpio` group and re-login:
+```
+$ sudo usermod -aG gpio $USER
+```
+
+## Running as a Service
+
+You can run the program as a Linux service under systemd. I've included an example unit file that you'll need to edit to match your setup.
+
+Edit the file `scorpion.service.example` and change the options for [PATH] and [USER] to match where you installed/cloned the program to and what user has permission to run it.
+
+Then copy the _example_ file to `/etc/systemd/system/scorpion.service`, enable it to start on boot and then start the service.
+
+```
+$ sudo cp scorpion.service.example /etc/systemd/system/scorpion.service
+$ sudo systemctl enable scorpion.service
+$ sudo systemctl start scorpion.service
 ```
 
 ## Configuration
@@ -51,7 +74,7 @@ GPIO=21       # By default we'll trigger the relay on GPIO 21 (BCM)
 DEBUG=false   # Outputs console messages when set to true
 ```
 
-## But why?
+# But why?
 
 As you can't use the Wake On LAN feature if you have a Wifi connected PC I wanted something I could use to remotely power it on. I could use a smart home socket, but where's the fun in that?
 
@@ -73,14 +96,14 @@ __Pinouts__
 
 | RPi pin | Name | Relay |
 | -: | :-: | :-: |
-| 2 | 5V | + |
-| 39 | GND | - |
+| 2 | 5V | + (IN) |
+| 39 | GND | - (GND) |
 | 40 | GPIO21 | VCC |
 
 | PC | Relay |
 | :-: | - |
-| + | COM (Common) |
-| - | NO ( Normally Open) |
+| + | COM (Common) 常用 |
+| - | NO (Normally Open) 常开 |
 
 
 ## Reference
