@@ -1,0 +1,17 @@
+{
+  "name": "scorpion",
+  "version": "0.1.0",
+  "description": "Simple COntroller for Raspberry PI ON",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "warlord",
+  "license": "GNU",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "gpio": "^0.2.7"
+  }
+}
