@@ -8,7 +8,9 @@ Just what I wanted for a simple RPi Zero W to control a single 5v relay to turn 
 
 ## How does it work
 
-The Node.js program uses and Express web server to listen on port 3000. You can communicate with this from your browser using a GET. But to drive it to trigger the GPIO pin you need to use a POST command and send 'application/JSON' in the with the secret token in the form `{ "token" : "supersecretkey" }`. This will set the default GPIO pin 21 value to 1 for .5 second, long enough to trip the relay and provide the momentary connection to power on your PC using the motherboard jumper connection for your power button.
+The Node.js program uses and Express web server to listen on port 3000. You can communicate with this from your browser using a GET. Using a browser you'll get a simple form that expects the token and the action you require to be submitted. So you can trigger the GPIO port from any browser on a phone or tablet - you just need to know the token.
+
+But the real power is to drive it to trigger the GPIO pin you need to use a POST command and send 'application/JSON' in the with the secret token in the form `{ "token" : "supersecretkey" }`. This will set the default GPIO pin 21 value to 1 for .5 second, long enough to trip the relay and provide the momentary connection to power on your PC using the motherboard jumper connection for your power button.
 
 You can use IFTTT.com's web request to trigger this for you by putting the json token into the "Body (optional)" or you can use curl.
 

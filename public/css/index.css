@@ -1,0 +1,9 @@
+.warning {
+  border-color: #e44;
+  background-color: #fdd;
+}
+
+.success {
+  border-color: #2d2;
+  background-color: #dfd;
+}

@@ -1,0 +1,64 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>scoRPIon</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="css/entireframework.min.css" rel="stylesheet" type="text/css">
+  <link href="css/index.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+  <!--[if lte IE 9]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+  <![endif]-->
+
+  <div class="container">
+    <h1>scoRPIon</h1>
+    <form action="/api" method="POST" id="scorpion">
+      <div class="form-group"><label for="token">Token: </label><input type="password" name="token" id="token" placeholder="Enter Token" class="smooth"></div>
+      <div class="form-group"><label for="action">Action: </label><select name="action" id="action" class="smooth">
+          <option value="on" selected>on/off</option>
+          <option value="force">force</option>
+        </select></div>
+      <div class="form-group"><input type="submit" name="action" class="btn btn-sm btn-a smooth"></div>
+      <div id="message"></div>
+    </form>
+  </div>
+
+
+  <script src="js/axios.min.js"></script>
+  <script>
+    document.body.onload = function() {
+      window.captureEvents(Event.SUBMIT)
+      window.onsubmit = function (e) {
+        e.preventDefault()
+        console.log(e)
+        var token = document.getElementById('token').value,
+          action = document.getElementById('action').value
+        axios.post('/api', {
+          token: token,
+          action: action
+        }).then(function(response) {
+          console.log(response)
+          var message = document.getElementById('message')
+          message.innerHTML = ''
+          if (response.data.success) {
+            message.innerHTML = '<div class="msg success">Success!</div>'
+          } else {
+            message.innerHTML = '<div class="msg warning">An error occured!</div>'
+          }
+          setTimeout(function() {
+            message.innerHTML = ''
+          }, 3000)
+        })
+      }
+    }
+  </script>
+
+</body>
+
+</html>

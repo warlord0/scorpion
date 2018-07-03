@@ -50,9 +50,33 @@ forceOff = () => {
 }
 app.use(bodyParser.json())
 
+var options = {
+  root: __dirname + '/public',
+  dotfiles: 'deny'
+}
+
+app.get('/', (req, res, next) => {
+  res.sendFile('index.html', options, (err) => {
+    if (err) {
+      // console.log(err)
+      next(err)
+    } else {
+
+    }
+  })
+})
+
 // Send a simple response to a http request
-app.get('/', (req, res) => {
-  res.send('scoRPIon')
+app.get('/:path/:name', (req, res, next) => {
+  res.sendFile('/'+req.params.path+'/'+req.params.name, options, (err) => {
+    if (err) {
+      // console.log(err)
+      res.sendStatus(err.statusCode).send(err.rerror)
+      next(err)
+    } else {
+
+    }
+  })
 })
 
 // Process a http post request to the path /api
