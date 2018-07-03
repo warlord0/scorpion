@@ -2,7 +2,7 @@
 
 ## Wake On Wireless LAN!
 
-Put simply it triggers a high value to a GPIO pin of you choice when a HTTP POST request is sent to the listening IP and TCP port.
+Put simply it triggers a high value to a GPIO pin of your choice when a HTTP POST request is sent to the listening IP and TCP port.
 
 Just what I wanted for a simple RPi Zero W to control a single 5v relay to turn on my PC remotely.
 
@@ -15,6 +15,25 @@ You can use IFTTT.com's web request to trigger this for you by putting the json 
 ```
 $ curl -H "Content-Type: application/json" -X POST -d '{ "token" : "supersecretkey" }' http://[IPADDRESS]:3000/api
 ```
+
+## API Actions
+
+Beyond the initial toggle power on/off I've added the ability to force a shutdown. A regular power toggle is a .5 second activation of the power switch relay. A forced shutdown holds the relay for 10.5 seconds.
+
+__API JSON__
+
+```
+{
+  "token" : "supersecretkey",
+  "action" : "on|off|force"
+}
+```
+
+| action | Description |
+| :-: | - |
+| on | Activate power relay for 0.5 second |
+| off | Activate power relay for 0.5 second |
+| force |  Activate power relay for 10.5 seconds |
 
 # Installation
 
@@ -105,6 +124,25 @@ __Pinouts__
 | + | COM (Common) 常用 |
 | - | NO (Normally Open) 常开 |
 
+# IFTTT.com
+
+Configuring IFTTT.com is relatively easy. Configure an "If this+" for the Google Assistant on whatever single phrase you'd like eg. When I say "Turn on my PC", have it trigger a "that+" event for a "Webhook"
+
+Set the URL of the webhook to point to your external IP address or dynamic DNS address on the port you have forwarded to your Pi (default: 3000) eg.
+
+| Make a Web Request |
+| - |
+| __URL__ |
+| http://[myexternalladdress]:3000/api |
+| __Method__ |
+| POST |
+| __Content Type__ |
+| application/json |
+| __Body (optional)__* |
+| { "token" : "supersecretkey", "action" : "on" } |
+
+
+_* Not optional_
 
 ## Reference
 

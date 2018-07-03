@@ -39,6 +39,15 @@ powerOn = () => {
   })
 }
 
+
+// Hold the power toggle for 10.5 seconds to trigger a forced shutdown
+forceOff = () => {
+  pin.set(() => {
+    setTimeout(() => {
+      pin.reset()
+    }, 10500)
+  })
+}
 app.use(bodyParser.json())
 
 // Send a simple response to a http request
@@ -49,9 +58,20 @@ app.get('/', (req, res) => {
 // Process a http post request to the path /api
 app.post('/api', (req, res) => {
   var response = { success: false }
+  if (process.env.DEBUG && req.body.action)
+    console.log('action: '+req.body.action)
   if (req.body.token && req.body.token == token) {
-    // Power on if the token matches
-    powerOn()
+    switch (req.body.action) {
+      case 'force':
+        forceOff();
+        break;
+      case 'on': // On/Off is just a toggle
+      case 'off':
+      default:
+        // Power on if the token matches
+        powerOn()
+        break;
+      }
     response.success = true
   }
   res.json(response)
