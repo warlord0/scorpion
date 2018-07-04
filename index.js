@@ -97,8 +97,10 @@ app.post('/api', (req, res) => {
         break;
       }
     response.success = true
+    res.json(response)
+  } else {
+    res.status(403).json(response)
   }
-  res.json(response)
 })
 
 // Start listening

@@ -1,64 +1,138 @@
-<!doctype html>
-<html class="no-js" lang="">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>scoRPIon</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link href="css/entireframework.min.css" rel="stylesheet" type="text/css">
-  <link href="css/index.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/img/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/img/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/img/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/img/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/img/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/img/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/img/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/img/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/img/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/img/ms-icon-144x144.png">
+
+    <meta name="author" content="Warlord">
+    <meta name="description" content="scoRPIon">
+    <meta name="keywords" content="Raspberry Pi, GPIO, relay">
+
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+
+    <link href="/css/metro-all.min.css?ver=@@b-version" rel="stylesheet">
+
+    <title>scoRPIon</title>
+
+    <style>
+        .login-form {
+            width: 350px;
+            height: auto;
+            top: 50%;
+            margin-top: -160px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .5), 0 6px 20px 0 rgba(0, 0, 0, .3);
+        }
+    </style>
 </head>
+<body class="h-vh-100 bg-lightMauve">
 
-<body>
-  <!--[if lte IE 9]>
-    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-  <![endif]-->
-
-  <div class="container">
-    <h1>scoRPIon</h1>
-    <form action="/api" method="POST" id="scorpion">
-      <div class="form-group"><label for="token">Token: </label><input type="password" name="token" id="token" placeholder="Enter Token" class="smooth"></div>
-      <div class="form-group"><label for="action">Action: </label><select name="action" id="action" class="smooth">
-          <option value="on" selected>on/off</option>
-          <option value="force">force</option>
-        </select></div>
-      <div class="form-group"><input type="submit" name="action" class="btn btn-sm btn-a smooth"></div>
-      <div id="message"></div>
+    <form class="login-form bg-white p-6 mx-auto border bd-default win-shadow"
+          data-role="validator"
+          action="javascript:"
+          data-clear-invalid="2000"
+          data-on-error-form="invalidForm"
+          data-on-validate-form="validateForm">
+        <span class="place-right" style="margin-top: -10px;"><img src="/img/apple-icon-60x60.png" /></span>
+        <h2 class="text-light">scoRPIon</h2>
+        <hr class="thin mt-4 mb-4 bg-white">
+        <!-- <div class="form-group">
+            <input type="text" data-role="input" data-prepend="<span class='mif-envelop'>" placeholder="Enter your email..." data-validate="required email">
+        </div> -->
+        <div class="form-group">
+            <input type="password" name="token" data-role="input" data-prepend="<span class='mif-key'>" placeholder="Enter your token..." data-validate="required minlength=6">
+        </div>
+        <div class="form-group">
+            <select name="rpiaction" data-role="select">
+              <option value="on" class="text-bold">
+                on | off toggle
+              </option>
+              <option value="force">
+                force
+              </option>
+            </select>
+        </div>
+        <div class="form-group mt-10">
+            <input type="checkbox" id="rememberme" data-role="checkbox" data-caption="Remember me" class="zplace-right">
+            <button class="button info place-right">Submit</button>
+        </div>
     </form>
-  </div>
 
+    <script src="/js/axios.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/metro.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        var token = getCookie('token'),
+          rememberme = getCookie('rememberme')
 
-  <script src="js/axios.min.js"></script>
-  <script>
-    document.body.onload = function() {
-      window.captureEvents(Event.SUBMIT)
-      window.onsubmit = function (e) {
-        e.preventDefault()
-        console.log(e)
-        var token = document.getElementById('token').value,
-          action = document.getElementById('action').value
+        if (rememberme && rememberme == 'true') {
+          $('#rememberme').prop('checked', true)
+          if (token) {
+            $('input[name="token"]').val(token)
+          }
+        }
+
+      })
+
+      function getCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+      }
+
+      function invalidForm(){
+        var form  = $(this);
+        form.addClass("ani-horizontal");
+        setTimeout(function(){
+          form.removeClass("ani-horizontal");
+        }, 2000);
+      }
+
+      function validateForm() {
+        rememberMe()
+        var token = $('input[name="token"]').val(),
+          action = $('input[name="rpiaction"]').val()
         axios.post('/api', {
           token: token,
           action: action
         }).then(function(response) {
-          console.log(response)
-          var message = document.getElementById('message')
-          message.innerHTML = ''
           if (response.data.success) {
-            message.innerHTML = '<div class="msg success">Success!</div>'
+            Metro.toast.create('Success!', null, null, 'success')
           } else {
-            message.innerHTML = '<div class="msg warning">An error occured!</div>'
+            Metro.toast.create('Failed!', null, null, 'warning')
           }
-          setTimeout(function() {
-            message.innerHTML = ''
-          }, 3000)
+        }).catch(function(err) {
+          Metro.toast.create(''+err, null, null, 'alert' )
         })
       }
-    }
-  </script>
+
+      function rememberMe() {
+        if ($('#rememberme').is(':checked')) {
+          document.cookie = 'token='+ $('input[name="token"]').val()
+          document.cookie = 'rememberme=true'
+        } else {
+          document.cookie = 'token=; expires=0;'
+          document.cookie = 'rememberme=; expires=0;'
+        }
+      }
+    </script>
 
 </body>
-
 </html>
