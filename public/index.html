@@ -59,7 +59,7 @@
             <input type="password" name="token" data-role="input" data-prepend="<span class='mif-key'>" placeholder="Enter your token..." data-validate="required minlength=6">
         </div>
         <div class="form-group">
-            <select name="rpiaction" data-role="select">
+            <select id="rpiaction" name="rpiaction" data-role="select">
               <option value="on" class="text-bold">
                 on | off toggle
               </option>
@@ -108,7 +108,7 @@
       function validateForm() {
         rememberMe()
         var token = $('input[name="token"]').val(),
-          action = $('input[name="rpiaction"]').val()
+          action = $('#rpiaction').val()
         axios.post('/api', {
           token: token,
           action: action
