@@ -135,8 +135,12 @@
 
       function rememberMe() {
         if ($('#rememberme').is(':checked')) {
-          document.cookie = 'token='+ $('input[name="token"]').val()
-          document.cookie = 'rememberme=true'
+          var aYearFromNow = new Date();
+          aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
+          document.cookie = 'token='+ $('input[name="token"]').val() +
+            '; expires='+aYearFromNow.toUTCString();
+          document.cookie = 'rememberme=true' +
+            '; expires='+aYearFromNow.toUTCString();
         } else {
           document.cookie = 'token=; expires=0;'
           document.cookie = 'rememberme=; expires=0;'

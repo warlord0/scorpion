@@ -86,13 +86,30 @@ TOKEN=myownsecret
 
 Then  when you start the program you'll need to pass your own token rather than the default.
 
+### Checking Status of the Target Host
+
+By using a tcp ping to an IP host it is able to determine if the target host is active. If it successfully connects to the target ip on the specified tcp port then you will see in the web GUI the switch for status will change to show that it is on.
+
+I recommend you set the target port to something you know is open. Port 445 is the port used by a Windows hosts for networking so by using the `.env` config settings:
+
+```
+TARGETIP=192.168.0.1
+TARGETPORT=445
+```
+
+The program will attempt to connect to port 445 on the specified IP. If you're using a \*nix host you might want to use another port like 22 or 80.
+
+If you leave the port at the default of 0 (zero) then no pinging will take place.
+
 ### Other .env Settings
 
 ```
-IP=0.0.0.0    # By default we'll listen on all IPv4 interfaces
-PORT=3000     # By default we'll listen on TCP port 3000
-GPIO=21       # By default we'll trigger the relay on GPIO 21 (BCM)
-DEBUG=false   # Outputs console messages when set to true
+IP=0.0.0.0          # By default we'll listen on all IPv4 interfaces
+PORT=3000           # By default we'll listen on TCP port 3000
+GPIO=21             # By default we'll trigger the relay on GPIO 21 (BCM)
+TARGETIP=127.0.0.1  # Ping the target to see if it's alive
+TARGETPORT=0        # If >0 ping the target to see if the port is open
+DEBUG=false         # Outputs console messages when set to true
 ```
 
 # But why?

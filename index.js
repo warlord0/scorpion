@@ -17,8 +17,8 @@ const port = process.env.PORT || 3000
 const GPIO = process.env.GPIO || 21
 const ip = process.env.IP || '0.0.0.0'
 const token = process.env.TOKEN || 'supersecretkey'
-const targetIp = process.env.targetIp || '127.0.0.1'
-const targetPort = process.env.targetPort || 0
+const targetIp = process.env.TARGETIP || '127.0.0.1'
+const targetPort = process.env.TARGETPORT || 0
 
 // Setup the GPIO pin to use
 var pin = gpio.export(GPIO, {
@@ -105,9 +105,7 @@ if (targetPort !== 0) {
           if (err) {
 
           } else {
-            if (available) {
-              io.emit('status', available)
-            }
+            io.emit('status', available)
           }
         })
       }
