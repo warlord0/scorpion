@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
-const express = require('express')
-const bodyParser = require('body-parser')
-const gpio = require('gpio')
-const app = express()
+const path = require('path')
+  express = require('express'),
+  app = express(),
+  http = require('http').Server(app),
+  io = require('socket.io')(http),
+  bodyParser = require('body-parser'),
+  gpio = require('gpio'),
+  tcpping = require('tcp-ping')
 
 // Read the config from the .env file
 require('dotenv').config()
@@ -13,6 +17,8 @@ const port = process.env.PORT || 3000
 const GPIO = process.env.GPIO || 21
 const ip = process.env.IP || '0.0.0.0'
 const token = process.env.TOKEN || 'supersecretkey'
+const targetIp = process.env.targetIp || '127.0.0.1'
+const targetPort = process.env.targetPort || 0
 
 // Setup the GPIO pin to use
 var pin = gpio.export(GPIO, {
@@ -50,33 +56,17 @@ forceOff = () => {
 }
 app.use(bodyParser.json())
 
+app.use(express.static(path.join(__dirname, 'public')))
+
 var options = {
   root: __dirname + '/public',
   dotfiles: 'deny'
 }
 
-app.get('/', (req, res, next) => {
-  res.sendFile('index.html', options, (err) => {
-    if (err) {
-      // console.log(err)
-      next(err)
-    } else {
-
-    }
-  })
-})
-
-// Send a simple response to a http request
-app.get('/:path/:name', (req, res, next) => {
-  res.sendFile('/'+req.params.path+'/'+req.params.name, options, (err) => {
-    if (err) {
-      // console.log(err)
-      res.sendStatus(err.statusCode).send(err.rerror)
-      next(err)
-    } else {
-
-    }
-  })
+io.on('connection', (socket) => {
+  if (process.env.DEBUG) {
+    console.log('Socket connected')
+  }
 })
 
 // Process a http post request to the path /api
@@ -103,8 +93,32 @@ app.post('/api', (req, res) => {
   }
 })
 
+// Only ping if the port is set
+if (targetPort !== 0) {
+  setInterval(() => {
+    // Only make an active ping if a client is connected
+    io.of('/').clients((err, clients) => {
+      if (clients.length > 0) {
+        if (process.env.DEBUG)
+          console.log('Pinging '+targetIp+':'+targetPort)
+        tcpping.probe(targetIp, targetPort, (err, available)  => {
+          if (err) {
+
+          } else {
+            if (available) {
+              io.emit('status', available)
+            }
+          }
+        })
+      }
+    })
+  }, 5000)
+}
+
 // Start listening
-app.listen(port, ip, () => {
+var server = app.listen(port, ip, () => {
   if (process.env.DEBUG)
     console.log('app listening on '+ip+':'+port)
 })
+
+io.listen(server)

@@ -52,9 +52,6 @@
         <span class="place-right" style="margin-top: -10px;"><img src="/img/apple-icon-60x60.png" /></span>
         <h2 class="text-light">scoRPIon</h2>
         <hr class="thin mt-4 mb-4 bg-white">
-        <!-- <div class="form-group">
-            <input type="text" data-role="input" data-prepend="<span class='mif-envelop'>" placeholder="Enter your email..." data-validate="required email">
-        </div> -->
         <div class="form-group">
             <input type="password" name="token" data-role="input" data-prepend="<span class='mif-key'>" placeholder="Enter your token..." data-validate="required minlength=6">
         </div>
@@ -68,8 +65,9 @@
               </option>
             </select>
         </div>
+        <div class="form-group"><input id="available" type="checkbox" data-role="switch" data-caption="Current State: Unknown"></div>
         <div class="form-group mt-10">
-            <input type="checkbox" id="rememberme" data-role="checkbox" data-caption="Remember me" class="zplace-right">
+            <input type="checkbox" id="rememberme" data-role="checkbox" data-caption="Remember me">
             <button class="button info place-right">Submit</button>
         </div>
     </form>
@@ -77,7 +75,15 @@
     <script src="/js/axios.min.js"></script>
     <script src="/js/jquery.min.js"></script>
     <script src="/js/metro.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script>
+      var socket = io();
+
+      socket.on('status', function(available) {
+        $('#available').prop('checked', available);
+        $('#available').nextAll('.caption').text('Current State: ' + ((available) ? 'On' : 'Off'));
+      })
+
       $(document).ready(function() {
         var token = getCookie('token'),
           rememberme = getCookie('rememberme')
@@ -89,6 +95,10 @@
           }
         }
 
+        $('#available').change(function() {
+          $('#rpiaction').val('on');
+          $('form').submit();
+        })
       })
 
       function getCookie(name) {
@@ -133,6 +143,5 @@
         }
       }
     </script>
-
 </body>
 </html>

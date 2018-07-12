@@ -12,7 +12,9 @@
     "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
-    "gpio": "^0.2.7"
+    "gpio": "^0.2.7",
+    "socket.io": "^2.1.1",
+    "tcp-ping": "^0.1.1"
   },
   "devDependencies": {
     "axios": "^0.18.0",
